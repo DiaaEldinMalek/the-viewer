@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class BookContent(BaseModel):
+class GutenbergBookContent(BaseModel):
     content: str
 
 

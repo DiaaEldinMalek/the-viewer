@@ -1,19 +1,5 @@
 import requests
-import os
-
-
-class SimpleHTTPResponse:
-    def __init__(self, response: requests.Response):
-        self.status_code = response.status_code
-        self.content = response.content
-        self.__json = None
-        self.__raw_response = response
-
-    @property
-    def json(self):
-        if self.__json is None:
-            self.__json = self.__raw_response.json()
-        return self.__json
+from backend.utils.simple_http_response import SimpleHTTPResponse
 
 
 class GutenbergDAO:

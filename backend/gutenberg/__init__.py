@@ -1,2 +1,2 @@
 from .controller import GutenController
-from .models import BookContent
+from .models import GutenbergBookContent
