@@ -4,9 +4,9 @@ import enum
 import logging
 from langchain_core.documents import Document
 
-from .gutenberg.controller import GutenController
-from .gutenberg.cache_manager import GutenbergCacheManager
-from .ai_interface.core import AISummarizer, AIChatAgent
+from ..gutenberg.controller import GutenController
+from ..gutenberg.cache_manager import GutenbergCacheManager
+from .core import AISummarizer, AIChatAgent
 from functools import lru_cache
 
 api_key = os.environ.get("GROQ_API_KEY")
