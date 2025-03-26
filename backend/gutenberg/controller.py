@@ -38,13 +38,14 @@ class GutenController:
             from_cache (bool): If True, will first check the cache for the content.
             cache (bool): If True, will cache the content after fetching it (from the website).
         """
+        metadata = self.fetch_book_metadata(book_id, from_cache=options.from_cache)
 
         if options.from_cache and (
             content := self.cache_manager.get_book_content(
                 book_id, cleaned=options.cleaned
             )
         ):
-            return GutenbergBookContent(content=content)
+            return GutenbergBookContent.load_with_metadata(content, metadata)
 
         response = self.dao.fetch_book_content(book_id)
 
@@ -70,7 +71,7 @@ class GutenController:
         else:  # Otherwise, return the data as is
             content = response.text
 
-        return GutenbergBookContent(content=content)
+        return GutenbergBookContent.load_with_metadata(content, metadata)
 
     def _get_content_path(self, book_id: int, cleaned: bool = True):
         """Get the path to the content file for a book."""

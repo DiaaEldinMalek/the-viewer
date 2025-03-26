@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Response
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Any
 import pydantic
+import logging
 
 from backend.gutenberg.controller import GutenController
 from backend.utils.exceptions import APIException
@@ -8,8 +10,16 @@ from backend.ai_tools.book_agent import AgentsManager
 
 gutenberg_api = GutenController()
 agents_manager = AgentsManager()
+logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class ResponseModel(pydantic.BaseModel):
@@ -51,8 +61,13 @@ class ChatRequest(pydantic.BaseModel):
     book_id: int
     message: str
 
+    def attach_response(self, response: str):
+        return ChatResponse(
+            book_id=self.book_id, message=self.message, response=response
+        )
 
-class ChatResponse(pydantic.BaseModel):
+
+class ChatResponse(ChatRequest):
     response: str
 
 
@@ -63,10 +78,12 @@ def chat(request: ChatRequest):
 
     try:
         response = agent.chat(request.message)
+        data = request.attach_response(response)
+        logging.info(data)
     except Exception as e:
-        print(e)
+        logging.exception(e)
         return ErrorModel(detail="Error during chat", status_code=500)
-    return ResponseModel(detail="Chat response", data=ChatResponse(response=response))
+    return ResponseModel(detail="Chat response", data=data)
 
 
 if __name__ == "__main__":
