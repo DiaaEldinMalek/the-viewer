@@ -65,9 +65,6 @@ class CachedContentManager(_BaseManager):
 
 
 class CachedMetadataManager(_BaseManager):
-    def __init__(self):
-        self.cache_dir = pathlib.Path("cache")
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
 
     def _get_metadata_path(self, book_id: int) -> pathlib.Path:
         return self.cache_dir.joinpath(str(book_id)).joinpath("metadata.json")
@@ -93,5 +90,34 @@ class CachedMetadataManager(_BaseManager):
             json.dump(metadata, f)
 
 
-class GutenbergCacheManager(CachedContentManager, CachedMetadataManager):
+class CachedSummaryManager(_BaseManager):
+    def _get_summary_path(self, book_id: int) -> pathlib.Path:
+        return self.cache_dir.joinpath(str(book_id)).joinpath("summary.txt")
+
+    def get_book_summary(self, book_id: int) -> Optional[str]:
+        summary_path = self._get_summary_path(book_id)
+
+        try:
+            with open(summary_path, "r") as f:
+                return f.read()
+        except FileNotFoundError:
+            return None
+
+    def save_book_summary(
+        self, book_id: int, summary: str, *, folder_checked: bool = False
+    ):
+        if not folder_checked:
+            self.create_book_folder(book_id)
+
+        summary_path = self._get_summary_path(book_id)
+
+        with open(summary_path, "w") as f:
+            f.write(summary)
+
+
+class GutenbergCacheManager(
+    CachedContentManager,
+    CachedMetadataManager,
+    CachedSummaryManager,
+):
     pass

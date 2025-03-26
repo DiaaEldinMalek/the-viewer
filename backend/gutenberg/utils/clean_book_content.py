@@ -1,9 +1,12 @@
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def clean_gutenberg_file(input_file, output_file):
     if os.path.exists(output_file):
-        print("Cleaned file already exists. Skipping cleaning.")
+        logger.debug("Cleaned file already exists. Skipping cleaning.")
         return
 
     with open(input_file, "r", encoding="utf-8") as infile:
@@ -26,4 +29,4 @@ def clean_gutenberg_file(input_file, output_file):
         with open(output_file, "w", encoding="utf-8") as outfile:
             outfile.writelines(cleaned_content)
     else:
-        print(f"Markers not found in {input_file}. File not cleaned.")
+        logger.warning(f"Markers not found in {input_file}. File not cleaned.")

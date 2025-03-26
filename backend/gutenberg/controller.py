@@ -53,8 +53,8 @@ class GutenController:
                 f"Textual content for book with id {book_id} not found. Might be unavailable or an audiobook."
             )
 
-        # Store raw data in cache if instruction given - this is the raw content and the cache manager
-        # automatically creates a cleaned copy on idk
+        # Store raw data in cache. the cache manager
+        # automatically creates a cleaned copy on disk
         self.cache_manager.save_book_content(book_id, response.text)
 
         # If the cleaned data is request, fetch it from the cache manager
@@ -62,15 +62,13 @@ class GutenController:
             content = self.cache_manager.get_book_content(
                 book_id, cleaned=options.cleaned
             )
-            if not content:
 
-                if not content:
-                    raise NotFoundError(
-                        f"Cleaned content for book with id {book_id} not found."
-                    )
+            if not content:
+                raise NotFoundError(
+                    f"Cleaned content for book with id {book_id} not found."
+                )
         else:  # Otherwise, return the data as is
             content = response.text
-            # Request the cleaned copy from the cache manager
 
         return GutenbergBookContent(content=content)
 
