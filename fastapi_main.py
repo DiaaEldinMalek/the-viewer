@@ -1,10 +1,13 @@
 from fastapi import FastAPI, Response
-from backend.gutenberg.controller import GutenController, GutenbergBookContent
-from backend.utils.exceptions import APIException
-import pydantic
 from typing import Any
+import pydantic
+
+from backend.gutenberg.controller import GutenController
+from backend.utils.exceptions import APIException
+from backend.ai_tools.book_agent import AgentsManager
 
 gutenberg_api = GutenController()
+agents_manager = AgentsManager()
 
 app = FastAPI()
 
@@ -42,6 +45,28 @@ def get_book_metadata(id: int):
     except APIException as e:
         return ErrorModel.from_exception(e)
     return ResponseModel(detail=f"Fetched metadata for book {id}", data=metadata)
+
+
+class ChatRequest(pydantic.BaseModel):
+    book_id: int
+    message: str
+
+
+class ChatResponse(pydantic.BaseModel):
+    response: str
+
+
+@app.post("/chat", response_model=ResponseModel)
+def chat(request: ChatRequest):
+
+    agent = agents_manager.get_agent(request.book_id)
+
+    try:
+        response = agent.chat(request.message)
+    except Exception as e:
+        print(e)
+        return ErrorModel(detail="Error during chat", status_code=500)
+    return ResponseModel(detail="Chat response", data=ChatResponse(response=response))
 
 
 if __name__ == "__main__":

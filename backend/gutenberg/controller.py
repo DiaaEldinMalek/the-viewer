@@ -72,6 +72,15 @@ class GutenController:
 
         return GutenbergBookContent(content=content)
 
+    def _get_content_path(self, book_id: int, cleaned: bool = True):
+        """Get the path to the content file for a book."""
+
+        # Fetch the content to ensure it is cached
+        self.fetch_book_content(
+            book_id, options=ContentOptions(from_cache=True, cleaned=cleaned)
+        )
+        return self.cache_manager._get_content_path(book_id, cleaned=cleaned)
+
     def fetch_book_metadata(
         self,
         book_id: int,
