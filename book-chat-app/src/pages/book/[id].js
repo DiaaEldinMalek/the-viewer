@@ -35,6 +35,12 @@ export default function BookPage() {
 
   return (
     <div className="book-container">
+      <div className="book-header">
+        <button onClick={() => router.push('/')} className="back-button">
+          ← Back to Search
+        </button>
+        {/* <h1>{book.title}</h1> */}
+      </div>
       <BookViewer content={book} />
       <ChatInterface bookId={id} />
     </div>
