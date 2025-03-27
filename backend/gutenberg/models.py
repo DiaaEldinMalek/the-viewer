@@ -11,7 +11,7 @@ class GutenbergBookContent(BaseModel):
     def load_with_metadata(cls, content: str, metadata: "BookMetadata"):
         return cls(
             title=metadata.metadata["title"],
-            author=metadata.metadata["author"],
+            author=metadata.metadata.get("author", "Unknown"),
             content=content,
         )
 

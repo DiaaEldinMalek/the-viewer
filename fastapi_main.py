@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import Any
 import pydantic
 import logging
+from threading import Thread
 
 from backend.gutenberg.controller import GutenController
 from backend.utils.exceptions import APIException
@@ -41,6 +42,7 @@ class ErrorModel(ResponseModel):
 
 @app.get("/get_book_content/{id}", response_model=ResponseModel)
 def get_book_content(id: int):
+    Thread(target=agents_manager.get_agent, args=(id,)).start()
     try:
         book_content = gutenberg_api.fetch_book_content(id)
     except APIException as e:

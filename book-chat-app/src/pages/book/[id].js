@@ -15,7 +15,16 @@ export default function BookPage() {
 
     const fetchBook = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/get_book_content/${id}`);
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/get_book_content/${id}`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true',
+              }
+            }
+          );
         if (!response.ok) throw new Error('Book not found');
         const data = await response.json();
         setBook(data.data);

@@ -183,3 +183,26 @@ body {
 .search-form button:hover {
   background-color: #2563eb;
 }
+
+/* Book Page Header */
+.book-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
