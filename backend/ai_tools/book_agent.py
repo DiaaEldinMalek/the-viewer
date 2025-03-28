@@ -2,7 +2,6 @@ from langchain_community.document_loaders import TextLoader
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_core.runnables import RunnableConfig
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_core.messages import AIMessage
 from langchain.chat_models import init_chat_model
 from langchain_core.tools import tool
 from langgraph.prebuilt import create_react_agent
@@ -10,11 +9,11 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 
-import logging
 import os
-from functools import lru_cache
+import logging
 import pathlib
 import logging
+import functools
 
 from backend.gutenberg import GutenController
 
@@ -116,7 +115,7 @@ class AgentsManager:
         self.agents: dict[int, BookAgent] = {}
 
     # Cache and reuse agents - one per book
-    @lru_cache(maxsize=128)
+    @functools.lru_cache(maxsize=128)
     def get_agent(self, book_id: int) -> BookAgent:
         logging.info(f"Creating agent for book {book_id}")
         return BookAgent(book_id)

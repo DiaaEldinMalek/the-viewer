@@ -2,7 +2,7 @@ from typing import Any
 from pydantic import BaseModel
 
 
-class GutenbergBookContent(BaseModel):
+class BookContent(BaseModel):
     title: str
     author: str
     content: str

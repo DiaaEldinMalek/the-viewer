@@ -1,5 +1,5 @@
 import random
-from backend.gutenberg.controller import GutenController, GutenbergBookContent
+from backend.gutenberg.controller import GutenController, BookContent
 import pathlib
 import json
 

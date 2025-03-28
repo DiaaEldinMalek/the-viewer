@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 from backend.utils.exceptions import NotFoundError
 from .dao import GutenbergDAO
-from .models import GutenbergBookContent, BookMetadata
+from .models import BookContent, BookMetadata
 from .cache_manager import GutenbergCacheManager
 from .utils.parse_metadata_from_landing_page import parse_metada_from_html
 from .utils.clean_book_content import clean_gutenberg_file
@@ -45,7 +45,7 @@ class GutenController:
                 book_id, cleaned=options.cleaned
             )
         ):
-            return GutenbergBookContent.load_with_metadata(content, metadata)
+            return BookContent.load_with_metadata(content, metadata)
 
         response = self.dao.fetch_book_content(book_id)
 
@@ -71,7 +71,7 @@ class GutenController:
         else:  # Otherwise, return the data as is
             content = response.text
 
-        return GutenbergBookContent.load_with_metadata(content, metadata)
+        return BookContent.load_with_metadata(content, metadata)
 
     def _get_content_path(self, book_id: int, cleaned: bool = True):
         """Get the path to the content file for a book."""
