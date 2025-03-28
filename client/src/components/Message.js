@@ -1,9 +1,14 @@
+import { marked } from 'marked';
+
 export default function Message({ sender, text }) {
-    return (
-      <div className={`message ${sender}`}>
-        <div className="message-content">
-          {text}
-        </div>
-      </div>
-    );
-  }
+  const html = marked(text);
+  
+  return (
+    <div className={`message ${sender}`}>
+      <div 
+        className="message-content"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    </div>
+  );
+}
