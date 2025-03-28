@@ -13,23 +13,14 @@ export default function Home() {
 
   useEffect(() => {
     setIsLoading(false);
-    // Load previous books from localStorage
     setPreviousBooks(getBookHistory());
-
-    // const stored = localStorage.getItem('previousBooks');
-    // if (stored) {
-    //   setPreviousBooks(JSON.parse(stored));
-    // }
   }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (bookId.trim() && !isLoading) {
-      // Add to history if not already present
       const newBooks = addToBookHistory(bookId.trim(), `Book #${bookId.trim()}`);
-      // const newBooks = [...new Set([bookId.trim(), ...previousBooks])].slice(0, 5);
       setPreviousBooks(newBooks);
-      // localStorage.setItem('previousBooks', JSON.stringify(newBooks));
       router.push(`/book/${bookId.trim()}`);
     }
   };
