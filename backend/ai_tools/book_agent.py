@@ -13,7 +13,6 @@ import os
 import logging
 import pathlib
 import logging
-import functools
 
 from backend.gutenberg import GutenController
 
@@ -114,8 +113,19 @@ class AgentsManager:
     def __init__(self) -> None:
         self.agents: dict[int, BookAgent] = {}
 
+    def remove_agent(self, book_id: int):
+        try:
+            del self.agents[book_id]
+        except KeyError:
+            logging.warning(f"Agent for book {book_id} not found in cache")
+
     # Cache and reuse agents - one per book
-    @functools.lru_cache(maxsize=128)
-    def get_agent(self, book_id: int) -> BookAgent:
-        logging.info(f"Creating agent for book {book_id}")
-        return BookAgent(book_id)
+    def get_agent(self, book_id: int, reset=False) -> BookAgent:
+        if self.agents.get(book_id) and not reset:
+            logging.info(f"Reusing agent for book {book_id}")
+            return self.agents[book_id]
+        else:
+            self.remove_agent(book_id)
+            logging.info(f"Creating new agent for book {book_id}")
+            self.agents[book_id] = BookAgent(book_id)
+            return self.agents[book_id]

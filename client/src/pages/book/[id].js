@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import BookViewer from '../../components/BookViewer';
 import ChatInterface from '../../components/ChatInterface';
-import { getBookHistory, addToBookHistory } from '../../../utils/bookHistory';
+import {addToBookHistory } from '../../../utils/bookHistory';
 
 export default function BookPage() {
   const [book, setBook] = useState(null);

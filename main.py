@@ -1,14 +1,15 @@
-from typing import Generic, TypeVar, Any
+from typing import Any
 import pydantic
 import logging
 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, BackgroundTasks
+from fastapi.exceptions import HTTPException
 
 from backend.gutenberg.controller import GutenController
-from backend.gutenberg.models import BookContent, BookMetadata
+from backend.gutenberg.models import BookContent
 from backend.utils.exceptions import APIException
-from backend.ai_tools.book_agent import AgentsManager
+from backend.ai_tools.book_agent import AgentsManager, BookAgent
 
 gutenberg_api = GutenController()
 agents_manager = AgentsManager()
@@ -25,8 +26,6 @@ app.add_middleware(
     allow_origin_regex="https://*.ngrok-free.app",
 )
 
-_Data = TypeVar("_Data")
-
 
 class ChatRequest(pydantic.BaseModel):
     book_id: int
@@ -42,9 +41,9 @@ class ChatResponse(ChatRequest):
     response: str
 
 
-class ResponseModel(pydantic.BaseModel, Generic[_Data]):
+class ResponseModel(pydantic.BaseModel):
     detail: str
-    data: Any = _Data
+    data: Any = None
     status: bool = True
     status_code: int = 200
 
@@ -58,41 +57,48 @@ class ErrorModel(ResponseModel):
         return cls(detail=e.message, status_code=e.status_code)
 
 
-@app.get("/get_book_content/{id}", response_model=ResponseModel[BookContent])
+@app.get("/get_book_content/{id}", response_model=ResponseModel)
 async def get_book_content(id: int, background_tasks: BackgroundTasks):
     background_tasks.add_task(agents_manager.get_agent, id)
 
     try:
         book_content: BookContent = gutenberg_api.fetch_book_content(id)
     except APIException as e:
-        return ErrorModel(detail=e.message, status_code=e.status_code)
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+    return ResponseModel(detail=f"Fetched book {id}", data=book_content)
 
-    return ResponseModel[BookContent](detail=f"Fetched book {id}", data=book_content)
 
-
-@app.get("/get_book_metadata/{id}", response_model=ResponseModel[BookMetadata])
+@app.get("/get_book_metadata/{id}", response_model=ResponseModel)
 def get_book_metadata(id: int):
     try:
         metadata = gutenberg_api.fetch_book_metadata(id)
     except APIException as e:
-        return ErrorModel.from_exception(e)
-    return ResponseModel[BookMetadata](
-        detail=f"Fetched metadata for book {id}", data=metadata
-    )
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+    return ResponseModel(detail=f"Fetched metadata for book {id}", data=metadata)
 
 
-@app.post("/chat", response_model=ResponseModel[ChatResponse])
+@app.post("/chat", response_model=ResponseModel)
 def chat(request: ChatRequest):
 
-    agent = agents_manager.get_agent(request.book_id)
-
-    try:
+    def respond(agent: BookAgent, request: ChatRequest):
         response = agent.chat(request.message)
         data = request.attach_response(response)
         logging.info(data)
+        return data
+
+    agent = agents_manager.get_agent(request.book_id)
+    try:
+        data = respond(agent, request)
     except Exception as e:
-        logging.exception(e)
-        return ErrorModel(detail="Error during chat", status_code=500)
+        agent = agents_manager.get_agent(request.book_id, reset=True)
+        try:
+            data = respond(agent, request)
+        except Exception as e:
+            # Log the exception
+            logging.error(f"Error during chat: {e}")
+            agents_manager.remove_agent(request.book_id)
+        raise HTTPException(status_code=500, detail="Error during chat")
+
     return ResponseModel(detail="Chat response", data=data)
 
 

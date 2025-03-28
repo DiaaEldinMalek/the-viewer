@@ -1,6 +1,6 @@
 'use client'; // Required for hooks
 
-import { addToBookHistory, getBookHistory } from '../utils/bookHistory';
+import {getBookHistory } from '../utils/bookHistory';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -19,15 +19,13 @@ export default function Home() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (bookId.trim() && !isLoading) {
-      const newBooks = addToBookHistory(bookId.trim(), `Book #${bookId.trim()}`);
-      setPreviousBooks(newBooks);
       router.push(`/book/${bookId.trim()}`);
     }
   };
 
   return (
     <div className="home-container">
-      <h1>Book Chat Application</h1>
+      <h1>AI-assisted Gutenberg Project</h1>
       <div className="main-content">
         <form onSubmit={handleSearch} className="search-form">
           <input
