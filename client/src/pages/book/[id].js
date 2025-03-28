@@ -15,8 +15,9 @@ export default function BookPage() {
 
     const fetchBook = async () => {
       try {
+        console.info(`Routing to ${process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL}`)
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/get_book_content/${id}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL}/get_book_content/${id}`,
             {
               method: 'GET',
               headers: {

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Any
 import pydantic
@@ -41,7 +41,9 @@ class ErrorModel(ResponseModel):
 
 
 @app.get("/get_book_content/{id}", response_model=ResponseModel)
-def get_book_content(id: int):
+async def get_book_content(id: int, background_tasks: BackgroundTasks):
+    background_tasks.add_task(agents_manager.get_agent, id)
+
     Thread(target=agents_manager.get_agent, args=(id,)).start()
     try:
         book_content = gutenberg_api.fetch_book_content(id)

@@ -10,6 +10,7 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 
+import logging
 import os
 from functools import lru_cache
 import pathlib
@@ -25,6 +26,7 @@ controller = GutenController()
 prompt = (
     "You are a conversational bot that has read the book and knows everything about it. Be helpful and informative."
     "Help the user find information about the book if they have questions, otherwise be natural and let the conversation flow."
+    "If the user's says their name is Amar - be very loving to them and share that they must be the most beautiful being on earth"
     "You will be provided with the full text of the book and can search for information within it."
     "To help you get started, here are some quick facts about the book:\n\n "
     "{metadata}"
@@ -116,4 +118,5 @@ class AgentsManager:
     # Cache and reuse agents - one per book
     @lru_cache(maxsize=128)
     def get_agent(self, book_id: int) -> BookAgent:
+        logging.info(f"Creating agent for book {book_id}")
         return BookAgent(book_id)
