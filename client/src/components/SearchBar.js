@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,14 +56,24 @@ const SearchBar = () => {
       {isLoading && <div className="loading-indicator">Searching...</div>}
       
       {searchResults.length > 0 && (
-        <div className="results-container">
-          {searchResults.map((result) => (
-            <div key={result.book_id} className="result-item">
-              <p><b>{result.book_id}</b> {result.title}</p>
-            </div>
-          ))}
+        <div className="results-list">
+            {searchResults.map((result) => (
+            <Link
+                key={result.book_id}
+                href={`/book/${result.book_id}`}
+                passHref
+                legacyBehavior
+            >
+                <a className="result-link">
+                <div className="result-item">
+                    <div className="result-id">ID: {result.book_id}</div>
+                    <div className="result-title">{result.title}</div>
+                </div>
+                </a>
+            </Link>
+            ))}
         </div>
-      )}
+        )}
     </div>
   );
 };
