@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import BookViewer from '../../components/BookViewer';
 import ChatInterface from '../../components/ChatInterface';
+import { getBookHistory, addToBookHistory } from '../../../utils/bookHistory';
 
 export default function BookPage() {
   const [book, setBook] = useState(null);
@@ -28,6 +29,7 @@ export default function BookPage() {
           );
         if (!response.ok) throw new Error('Book not found');
         const data = await response.json();
+        addToBookHistory(id, data.data.title);
         setBook(data.data);
       } catch (err) {
         setError(err.message);
@@ -50,7 +52,7 @@ export default function BookPage() {
           ← Back to Search
         </button>
       </div>
-      <BookViewer content={book} />
+      <BookViewer book={book} />
       <ChatInterface bookId={id} />
     </div>
   );

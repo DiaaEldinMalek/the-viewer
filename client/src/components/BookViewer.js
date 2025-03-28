@@ -1,9 +1,9 @@
-export default function BookViewer({ content }) {
+export default function BookViewer({ book }) {
     return (
       <div className="book-viewer">
-        <h1>{content.title}</h1>
+        <h1>{book.title}</h1>
         <div className="book-content">
-          {content.content.split('\n').map((paragraph, i) => (
+          {book.content.split('\n').map((paragraph, i) => (
             <p key={i}>{paragraph}</p>
           ))}
         </div>

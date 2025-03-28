@@ -1,5 +1,7 @@
 'use client'; // Required for hooks
 
+import { addToBookHistory, getBookHistory } from '../utils/bookHistory';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -12,19 +14,22 @@ export default function Home() {
   useEffect(() => {
     setIsLoading(false);
     // Load previous books from localStorage
-    const stored = localStorage.getItem('previousBooks');
-    if (stored) {
-      setPreviousBooks(JSON.parse(stored));
-    }
+    setPreviousBooks(getBookHistory());
+
+    // const stored = localStorage.getItem('previousBooks');
+    // if (stored) {
+    //   setPreviousBooks(JSON.parse(stored));
+    // }
   }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (bookId.trim() && !isLoading) {
       // Add to history if not already present
-      const newBooks = [...new Set([bookId.trim(), ...previousBooks])].slice(0, 5);
+      const newBooks = addToBookHistory(bookId.trim(), `Book #${bookId.trim()}`);
+      // const newBooks = [...new Set([bookId.trim(), ...previousBooks])].slice(0, 5);
       setPreviousBooks(newBooks);
-      localStorage.setItem('previousBooks', JSON.stringify(newBooks));
+      // localStorage.setItem('previousBooks', JSON.stringify(newBooks));
       router.push(`/book/${bookId.trim()}`);
     }
   };
@@ -49,10 +54,10 @@ export default function Home() {
           <h3>Previously Viewed Books</h3>
           {previousBooks.length > 0 ? (
             <ul>
-              {previousBooks.map((id) => (
-                <li key={id}>
-                  <button onClick={() => router.push(`/book/${id}`)}>
-                    Book #{id}
+              {previousBooks.map((book) => (
+                <li key={book.id}>
+                  <button onClick={() => router.push(`/book/${book.id}`)}>
+                    {book.id}-{book.name}
                   </button>
                 </li>
               ))}
