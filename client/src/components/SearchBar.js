@@ -44,19 +44,19 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="search-container">
+    <div className="search-form">
       <input
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search in CSV..."
+        placeholder="Find book by name..."
         className="search-input"
       />
       
       {isLoading && <div className="loading-indicator">Searching...</div>}
       
       {searchResults.length > 0 && (
-        <div className="results-list">
+        <div className="search-results-list">
             {searchResults.map((result) => (
             <Link
                 key={result.book_id}

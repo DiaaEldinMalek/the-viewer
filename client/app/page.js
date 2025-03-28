@@ -38,7 +38,7 @@ export default function Home() {
             type="number"
             value={bookId}
             onChange={(e) => setBookId(e.target.value)}
-            placeholder="Enter Book ID"
+            placeholder="..or enter book ID"
             required
             disabled={isLoading}
           />
