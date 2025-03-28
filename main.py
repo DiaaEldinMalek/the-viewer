@@ -10,9 +10,12 @@ from backend.gutenberg.controller import GutenController
 from backend.gutenberg.models import BookContent
 from backend.utils.exceptions import APIException
 from backend.ai_tools.book_agent import AgentsManager, BookAgent
+from backend.gutenberg.searcher import Searcher
 
 gutenberg_api = GutenController()
 agents_manager = AgentsManager()
+s = Searcher()
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -55,6 +58,19 @@ class ErrorModel(ResponseModel):
     @classmethod
     def from_exception(cls, e: APIException):
         return cls(detail=e.message, status_code=e.status_code)
+
+
+class SearchQuery(pydantic.BaseModel):
+    query: str
+
+
+@app.post("/search", response_model=ResponseModel)
+def search(query: SearchQuery):
+    try:
+        results = s.search(query.query)[:5]
+        return ResponseModel(detail="Search results", data=results)
+    except Exception:
+        raise HTTPException(status_code=500, detail="Couldn't find results")
 
 
 @app.get("/get_book_content/{id}", response_model=ResponseModel)

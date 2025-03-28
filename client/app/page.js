@@ -1,6 +1,7 @@
 'use client'; // Required for hooks
 
 import {getBookHistory } from '../utils/bookHistory';
+import SearchBar from '../src/components/SearchBar';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -25,6 +26,13 @@ export default function Home() {
 
   return (
     <div className="home-container">
+      <div className="container">
+      <main className="main">
+        <h1>Project Gutenberg Search</h1>
+        <SearchBar />
+        {/* Add other content for your home page below */}
+      </main>
+    </div>
       <h1>AI-assisted Gutenberg Project</h1>
       <div className="main-content">
         <form onSubmit={handleSearch} className="search-form">
