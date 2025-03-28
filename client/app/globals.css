@@ -249,3 +249,45 @@ padding: 0.5rem;
 .back-button:hover {
 text-decoration: underline;
 }
+
+
+.main-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.previous-books {
+  min-width: 200px;
+  padding: 1rem;
+  background: #2563eb;
+  border-radius: 8px;
+}
+
+.previous-books h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.previous-books ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.previous-books li {
+  margin-bottom: 0.5rem;
+}
+
+.previous-books button {
+  width: 100%;
+  padding: 0.5rem;
+  background: rgb(5, 0, 0);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.previous-books button:hover {
+  background: #eee;
+}
