@@ -31,7 +31,7 @@ export default function Home() {
         <SearchBar />
       </main>
     </div>
-      <h1>AI-assisted Gutenberg Project</h1>
+      <h1>{process.env.NEXT_PUBLIC_APP_NAME}</h1>
       <div className="main-content">
         <form onSubmit={handleSearch} className="search-form">
           <input
