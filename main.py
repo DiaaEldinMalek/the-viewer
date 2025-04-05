@@ -26,7 +26,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
-    allow_origin_regex="https://*.ngrok-free.app",
+    allow_origin_regex="https://*",
 )
 
 
@@ -62,6 +62,11 @@ class ErrorModel(ResponseModel):
 
 class SearchQuery(pydantic.BaseModel):
     query: str
+
+
+@app.get("/ping")
+def ping():
+    return {"message": "pong"}
 
 
 @app.post("/search", response_model=ResponseModel)
@@ -121,4 +126,4 @@ def chat(request: ChatRequest):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app)
+    uvicorn.run(app, host="0.0.0.0")

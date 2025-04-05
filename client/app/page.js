@@ -10,6 +10,7 @@ export default function Home() {
   const [bookId, setBookId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [previousBooks, setPreviousBooks] = useState([]);
+  const [pingResponse, setPingResponse] = useState(null); // State to store ping response
   const router = useRouter();
 
   useEffect(() => {
@@ -24,13 +25,36 @@ export default function Home() {
     }
   };
 
+  const testServer = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL}/ping`,
+        {
+          method: 'GET',
+          headers: {
+            'ngrok-skip-browser-warning': 'true',
+          }
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setPingResponse(data.message);
+      } else {
+        setPingResponse('Server error');
+      }
+    } catch (error) {
+      setPingResponse('Failed to connect to server');
+    }
+  };
+
   return (
     <div className="home-container">
       <div className="container">
-      <main className="main">
-        <SearchBar />
-      </main>
-    </div>
+        <main className="main">
+          <SearchBar />
+        </main>
+      </div>
       <h1>{process.env.NEXT_PUBLIC_APP_NAME}</h1>
       <div className="main-content">
         <form onSubmit={handleSearch} className="search-form">
@@ -60,6 +84,13 @@ export default function Home() {
           ) : (
             <p>No books viewed yet</p>
           )}
+        </div>
+
+        {/* Test Server Button */}
+        <div className="test-server">
+          
+          <button onClick={testServer}>Ping </button>
+          {pingResponse && <p>✓</p>}
         </div>
       </div>
     </div>
