@@ -38,8 +38,7 @@ export default function Home() {
       );
       
       if (response.ok) {
-        const data = await response.json();
-        setPingResponse(data.message);
+        setPingResponse("✓");
       } else {
         setPingResponse('Server error');
       }
@@ -90,7 +89,7 @@ export default function Home() {
         <div className="test-server">
           
           <button onClick={testServer}>Ping </button>
-          {pingResponse && <p>✓</p>}
+          {<p>{pingResponse}</p>}
         </div>
       </div>
     </div>
