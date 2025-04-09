@@ -13,10 +13,10 @@ class GutenbergDAO:
     # TODO: implement retry mechanism decorator in case of network failures
     def fetch_book_content(self, book_id: int):
         url = self.base_url + f"/cache/epub/{book_id}/pg{book_id}.txt"
-        response = requests.get(url)
+        response = requests.get(url, verify=False)
         return SimpleHTTPResponse(response)
 
     def fetch_book_metadata(self, book_id: int):
         url = self.base_url + f"/ebooks/{book_id}"
-        response = requests.get(url)
+        response = requests.get(url, verify=False)
         return SimpleHTTPResponse(response)
