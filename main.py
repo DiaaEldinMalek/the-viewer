@@ -107,20 +107,24 @@ def chat(request: ChatRequest):
         logging.info(data)
         return data
 
-    agent = agents_manager.get_agent(request.book_id)
-    try:
-        data = respond(agent, request)
-    except Exception as e:
-        agent = agents_manager.get_agent(request.book_id, reset=True)
+    trial = 0
+    max_trials = 3
+    while trial < max_trials:
+        trial += 1
+        agent = agents_manager.get_agent(request.book_id)
         try:
             data = respond(agent, request)
+            return ResponseModel(detail="Chat response", data=data)
+
         except Exception as e:
             # Log the exception
-            logging.error(f"Error during chat: {e}")
+            logging.exception(f"Error during chat: {e}")
             agents_manager.remove_agent(request.book_id)
-        raise HTTPException(status_code=500, detail="Error during chat")
+            # Attempt to reinitialize the agent
 
-    return ResponseModel(detail="Chat response", data=data)
+    raise HTTPException(
+        status_code=500, detail="Agent failed to respond after multiple attempts"
+    )
 
 
 if __name__ == "__main__":
