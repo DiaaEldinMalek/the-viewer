@@ -6,6 +6,10 @@ const SearchBar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
+
   // Debounce function to limit API calls
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -51,29 +55,30 @@ const SearchBar = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Find book by name..."
         className="search-input"
+        disabled={isLoading}
       />
-      
+
       {isLoading && <div className="loading-indicator">Searching...</div>}
-      
+
       {searchResults.length > 0 && (
         <div className="search-results-list">
-            {searchResults.map((result) => (
+          {searchResults.map((result) => (
             <Link
-                key={result.book_id}
-                href={`/book/${result.book_id}`}
-                passHref
-                legacyBehavior
+              key={result.book_id}
+              href={`/book/${result.book_id}`}
+              passHref
+              legacyBehavior
             >
-                <a className="result-link">
+              <a className="result-link">
                 <div className="result-item">
-                    <div className="result-id">ID: {result.book_id}</div>
-                    <div className="result-title">{result.title}</div>
+                  <div className="result-id">ID: {result.book_id}</div>
+                  <div className="result-title">{result.title}</div>
                 </div>
-                </a>
+              </a>
             </Link>
-            ))}
+          ))}
         </div>
-        )}
+      )}
     </div>
   );
 };
