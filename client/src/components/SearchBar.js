@@ -55,7 +55,6 @@ const SearchBar = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Find book by name..."
         className="search-input"
-        disabled={isLoading}
       />
 
       {isLoading && <div className="loading-indicator">Searching...</div>}

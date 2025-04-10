@@ -1,8 +1,11 @@
 const { getBookHistory } = require('@/utils/bookHistory');
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
 
 const PreviousBooksList = () => {
     const [previousBooks, setPreviousBooks] = useState([]);
+    const router = useRouter();
 
     useEffect(() => {
         setPreviousBooks(getBookHistory());
